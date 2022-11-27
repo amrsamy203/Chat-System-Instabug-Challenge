@@ -103,7 +103,7 @@ curl --location --request POST 'http://localhost:3000/applications' \
 curl --location --request POST 'http://localhost:3000/applications/application_token/chats'
 
 #### To create a Message To a specific chat you must have the identifier_number which generated from the previous request
-curl --location --request POST 'http://localhost:3000/applications/fdsfdfsdf/chats/1/messages' \
+curl --location --request POST 'http://localhost:3000/applications/application_token/chats/chat_identifier_number/messages' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "message":
