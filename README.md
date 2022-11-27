@@ -1,6 +1,6 @@
 # Instabug Challenge
-I recently received this challenge to work on as part of the hiring process.
-*P.S: Because I had never used rails or ruby before, the code may not be up to RoR standards.
+    - I recently received this challenge to work on as part of the hiring process.
+    - Because I had never used rails or ruby before, the code may not be up to RoR standards.
 
 ## Challenge Statement
 The system should allow creating new applications where
@@ -45,17 +45,18 @@ Second I used Trello to split the whole project into small tasks [https://trello
 > - Application
 > - Chat
 > - Message
-
-#### Step 2
 To generate those models in RoR                                                                              
     - ruby bin\rails g model Application identifier_token:string name:string chat_count:integer     
     - ruby bin\rails g model Chat identifier_number:integer message_count:integer application:references               
     - ruby bin\rails g model message identifier_number body:text chat:references
 
-#### Step 3
+#### Step 2
 Then Choose The appropirate Index can create easly
     - ruby bin\rails g migration AddIndexToChats identifier_number:index 
     - ruby bin\rails g migration AddIndexToMessages identifier_number:index
+
+#### Step 3
+Run database migrate to create the schema of the database.
 
 #### Step 4
 Then generate 3 Controller for (Application - Chat - Message)
