@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+    # Our mysql service:
+    db_mysql: 
+        image: mysql:5.7
+        hostname: mysql
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=1234
+            - MYSQL_DATABASE=chat_app
+        ports:
+            - "3306"
+        expose:
+            - "3306"
+        command: --default-authentication-plugin=mysql_native_password
+
+    # Our redis service:
+    redis:
+        image: redis:3.2.4-alpine
+        restart: always
+        volumes:
+            - ./volumes/redis-data:/data
+        command: redis-server --appendonly yes
+    
+    # Our rabbitmq service:
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        restart: always
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        volumes:
+            - ./volumes/rabbitmq:/var/lib/rabbitmq
+    
+    # Our elasticsearch service:
+    es:
+        image: elasticsearch:5.4.3
+        restart: always
+        ports:
+            - "9200:9200"
+
+    # Our web application:
+    app: 
+        build: .
+        command: sh -c "sh wait-curl.sh es:9200 && sh ./entrypoint.sh"
+        volumes: 
+            - ".:/app"
+        ports: 
+            - "3000:3000"
+        links:
+            - db_mysql
+            - redis
+            - es
+            - rabbitmq
+        environment:
+            WAIT_HOSTS: db_mysql:3306
+            APPLICATION_PORT: 3000
+            REDIS_HOST: redis
+            RABBITMQ_HOST: rabbitmq
+            ES_HOST: es
+            AMPQ_ADDRESS: amqp://rabbitmq:15672
+
+    # Our queuing message service:    
+    worker:
+        build: .
+        restart: always
+        volumes:
+            - .:/app
+        links:
+            - app
+            - db_mysql
+            - redis
+            - es
+            - rabbitmq
+        depends_on:
+            - app
+            - db_mysql
+            - redis
+            - es
+            - rabbitmq
+        environment:
+            WORKERS: ChatsWorker
+            AMPQ_ADDRESS: amqp://rabbitmq:15672
+            RABBITMQ_HOST: rabbitmq
+            ES_HOST: es
+            REDIS_HOST: redis
+    
+
+
