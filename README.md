@@ -1,4 +1,4 @@
-# Instabug Challenge
+# Chat System Instabug Challenge
     - I recently received this challenge to work on as part of the hiring process.
     - Because I had never used rails or ruby before, the code may not be up to RoR standards.
 
